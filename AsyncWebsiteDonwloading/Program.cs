@@ -11,29 +11,24 @@ namespace AsyncWebsiteDonwloading
 {
     class Program
     {
-
-        static Task<HttpResponseMessage> AsyncDownloading(string Url)
-        {
-            HttpClient client = new HttpClient();
-            var SizeOfPage = client.GetAsync(Url);
-            return SizeOfPage;
-        }
-
         static async Task Main(string[] args)
         {
+            var client = new HttpClient();
             Console.WriteLine("Enter list of URL for downloading and separate them by space:");
             string [] urls = (Console.ReadLine()).Split(' ');
-            List <HttpResponseMessage> response = new List<HttpResponseMessage> { };
+            List <Task<HttpResponseMessage>> response = new List<Task<HttpResponseMessage>> { };
             foreach (string url in urls)
             {
-                response.Add(await AsyncDownloading(url));                
+                response.Add(Task.Run(async () =>
+                {
+                    return await client.GetAsync(url);
+                }));
             }
-            double totalSize = 0;
-            foreach (var size in response)
+            var result = await Task.WhenAll(response);
+            foreach (var message in result)
             {
-                totalSize += size.Content.ReadAsByteArrayAsync().Result.Length;
+                Console.WriteLine(message.Content.Headers.ContentLength);
             }
-            Console.WriteLine($"Size of pages is {totalSize / 1024} Kb.");
             Console.ReadKey();
         }
     }
