@@ -15,8 +15,8 @@ namespace AsyncWebsiteDonwloading
         {
             var client = new HttpClient();
             Console.WriteLine("Enter list of URL for downloading and separate them by space:");
-            string [] urls = (Console.ReadLine()).Split(' ');
-            List <Task<HttpResponseMessage>> response = new List<Task<HttpResponseMessage>> { };
+            string[] urls = (Console.ReadLine()).Split(' ');
+            List<Task<HttpResponseMessage>> response = new List<Task<HttpResponseMessage>> { };
             foreach (string url in urls)
             {
                 response.Add(Task.Run(async () =>
